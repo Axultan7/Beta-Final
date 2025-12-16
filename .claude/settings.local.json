@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(dir \"c:\"\")",
+      "Bash(mvn clean package:*)",
+      "Bash(docker --version:*)",
+      "Bash(docker-compose:*)",
+      "Bash(docker info:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(timeout:*)",
+      "Bash(curl:*)",
+      "Bash(docker logs:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX1VTRVIiXSwidHlwZSI6ImFjY2VzcyIsInVzZXJJZCI6IjY5NGY4OGE3LWVmMGQtNGNjOS04ZTM4LTM4MjM2MmNlMjcxZSIsInN1YiI6InRlc3RAZXhhbXBsZS5jb20iLCJpYXQiOjE3NjU4OTYxNDIsImV4cCI6MTc2NTg5NzA0Mn0.xJEnRnLuiTsh35irRpZVkTFg0Vm4xIlnOL7E0VZ4XeI\")"
+    ]
+  }
+}
