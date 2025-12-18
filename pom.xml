@@ -22,6 +22,8 @@
         <module>shared-lib</module>
         <module>auth-service</module>
         <module>user-service</module>
+        <module>sender-service</module>
+        <module>request-service</module>
         <module>api-gateway</module>
     </modules>
 

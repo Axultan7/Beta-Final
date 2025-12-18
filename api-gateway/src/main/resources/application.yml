@@ -41,6 +41,10 @@ services:
     url: ${AUTH_SERVICE_URL:http://localhost:8081}
   user-service:
     url: ${USER_SERVICE_URL:http://localhost:8082}
+  sender-service:
+    url: ${SENDER_SERVICE_URL:http://localhost:8083}
+  request-service:
+    url: ${REQUEST_SERVICE_URL:http://localhost:8084}
 
 # Rate Limiting Configuration
 rate-limit:
@@ -80,4 +84,8 @@ springdoc:
         url: /auth-service/v3/api-docs
       - name: user-service
         url: /user-service/v3/api-docs
+      - name: sender-service
+        url: /sender-service/v3/api-docs
+      - name: request-service
+        url: /request-service/v3/api-docs
     use-root-path: true

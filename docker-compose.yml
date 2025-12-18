@@ -41,6 +41,48 @@ services:
       timeout: 5s
       retries: 5
 
+  # PostgreSQL for Sender Service
+  postgres-sender:
+    image: postgres:14-alpine
+    container_name: postgres-sender
+    environment:
+      POSTGRES_DB: sender_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secure_password}
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres-sender-data:/var/lib/postgresql/data
+      - ./init-scripts/sender-init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sender_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL for Request Service
+  postgres-request:
+    image: postgres:14-alpine
+    container_name: postgres-request
+    environment:
+      POSTGRES_DB: request_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secure_password}
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres-request-data:/var/lib/postgresql/data
+      - ./init-scripts/request-init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d request_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # Redis for caching and session management
   redis:
     image: redis:7-alpine
@@ -129,6 +171,75 @@ services:
       retries: 3
       start_period: 40s
 
+  # Sender Service
+  sender-service:
+    build:
+      context: ./sender-service
+      dockerfile: Dockerfile
+    container_name: sender-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: postgres-sender
+      DB_PORT: 5432
+      DB_NAME: sender_db
+      DB_USER: postgres
+      DB_PASSWORD: ${DB_PASSWORD:-secure_password}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_password}
+      JWT_SECRET: ${JWT_SECRET:-your_super_secret_key_that_should_be_at_least_256_bits_long}
+      REQUEST_SERVICE_URL: http://request-service:8084
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres-sender:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Request Service
+  request-service:
+    build:
+      context: ./request-service
+      dockerfile: Dockerfile
+    container_name: request-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: postgres-request
+      DB_PORT: 5432
+      DB_NAME: request_db
+      DB_USER: postgres
+      DB_PASSWORD: ${DB_PASSWORD:-secure_password}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_password}
+      JWT_SECRET: ${JWT_SECRET:-your_super_secret_key_that_should_be_at_least_256_bits_long}
+      SENDER_SERVICE_URL: http://sender-service:8083
+      PROCESSING_DELAY: 10
+    ports:
+      - "8084:8084"
+    depends_on:
+      postgres-request:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
   # API Gateway
   api-gateway:
     build:
@@ -139,6 +250,8 @@ services:
       SPRING_PROFILES_ACTIVE: docker
       AUTH_SERVICE_URL: http://auth-service:8081
       USER_SERVICE_URL: http://user-service:8082
+      SENDER_SERVICE_URL: http://sender-service:8083
+      REQUEST_SERVICE_URL: http://request-service:8084
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_password}
@@ -149,6 +262,10 @@ services:
       auth-service:
         condition: service_healthy
       user-service:
+        condition: service_healthy
+      sender-service:
+        condition: service_healthy
+      request-service:
         condition: service_healthy
     networks:
       - microservices-network
@@ -162,6 +279,8 @@ services:
 volumes:
   postgres-auth-data:
   postgres-user-data:
+  postgres-sender-data:
+  postgres-request-data:
   redis-data:
 
 networks:
