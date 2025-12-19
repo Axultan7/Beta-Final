@@ -56,15 +56,15 @@ public class GatewayConfig {
 
                 // Auth Service Swagger
                 .route("auth-service-swagger", r -> r
-                        .path("/auth-service/v3/api-docs/**")
-                        .filters(f -> f.rewritePath("/auth-service/v3/api-docs/(?<segment>.*)", "/v3/api-docs/${segment}"))
+                        .path("/auth-service/v3/api-docs", "/auth-service/v3/api-docs/**")
+                        .filters(f -> f.rewritePath("/auth-service(?<segment>/?.*)", "${segment}"))
                         .uri(authServiceUrl)
                 )
 
                 // User Service Swagger
                 .route("user-service-swagger", r -> r
-                        .path("/user-service/v3/api-docs/**")
-                        .filters(f -> f.rewritePath("/user-service/v3/api-docs/(?<segment>.*)", "/v3/api-docs/${segment}"))
+                        .path("/user-service/v3/api-docs", "/user-service/v3/api-docs/**")
+                        .filters(f -> f.rewritePath("/user-service(?<segment>/?.*)", "${segment}"))
                         .uri(userServiceUrl)
                 )
 
@@ -90,15 +90,15 @@ public class GatewayConfig {
 
                 // Sender Service Swagger
                 .route("sender-service-swagger", r -> r
-                        .path("/sender-service/v3/api-docs/**")
-                        .filters(f -> f.rewritePath("/sender-service/v3/api-docs/(?<segment>.*)", "/v3/api-docs/${segment}"))
+                        .path("/sender-service/v3/api-docs", "/sender-service/v3/api-docs/**")
+                        .filters(f -> f.rewritePath("/sender-service(?<segment>/?.*)", "${segment}"))
                         .uri(senderServiceUrl)
                 )
 
                 // Request Service Swagger
                 .route("request-service-swagger", r -> r
-                        .path("/request-service/v3/api-docs/**")
-                        .filters(f -> f.rewritePath("/request-service/v3/api-docs/(?<segment>.*)", "/v3/api-docs/${segment}"))
+                        .path("/request-service/v3/api-docs", "/request-service/v3/api-docs/**")
+                        .filters(f -> f.rewritePath("/request-service(?<segment>/?.*)", "${segment}"))
                         .uri(requestServiceUrl)
                 )
 

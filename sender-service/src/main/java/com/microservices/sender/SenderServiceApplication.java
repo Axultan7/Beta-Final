@@ -18,8 +18,8 @@ import org.springframework.context.annotation.ComponentScan;
                 contact = @Contact(name = "API Support", email = "support@example.com")
         ),
         servers = {
-                @Server(url = "http://localhost:8083", description = "Local Development Server"),
-                @Server(url = "http://sender-service:8083", description = "Docker Environment")
+                @Server(url = "http://localhost:8085", description = "API Gateway"),
+                @Server(url = "http://localhost:8083", description = "Local Development Server")
         }
 )
 public class SenderServiceApplication {

@@ -20,8 +20,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
                 contact = @Contact(name = "API Support", email = "support@example.com")
         ),
         servers = {
-                @Server(url = "http://localhost:8084", description = "Local Development Server"),
-                @Server(url = "http://request-service:8084", description = "Docker Environment")
+                @Server(url = "http://localhost:8085", description = "API Gateway"),
+                @Server(url = "http://localhost:8084", description = "Local Development Server")
         }
 )
 public class RequestServiceApplication {
